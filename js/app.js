@@ -116,10 +116,16 @@ function initDynamicFields() {
         radio.addEventListener("change", function () {
             const value = getRadioValue("timingFormat");
 
+           // Поле для варіанту "Інше"
             showElementById(
-                "timingFormatOtherRow",
-                value === "Інше"
+            "timingFormatOtherRow",
+            value === "Інше"
             );
+            // Блок етапів робіт
+            showElementById(
+            "section-stages",
+            value === "Кілька етапів і окремий акт по кожному етапу"
+    );
         });
     });
 
