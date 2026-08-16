@@ -846,7 +846,7 @@ function downloadWordDocument(html, data) {
     const projectName = data.general.projectName || "Brief";
 
     const safeFileName = makeSafeFileName(
-        "Brief_" + projectNo + "_" + projectName + ".docx"
+        "Brief_" + projectNo + "_" + projectName + ".doc"
     );
 
     const blob = new Blob(["\ufeff", html], {
@@ -926,7 +926,7 @@ function downloadWordDocument(html, data) {
     const projectName = data.general.projectName || "Brief";
 
     const safeFileName = makeSafeFileName(
-        "Brief_" + projectNo + "_" + projectName + ".docx"
+        "Brief_" + projectNo + "_" + projectName + ".doc"
     );
 
     const blob = new Blob(["\ufeff", html], {
