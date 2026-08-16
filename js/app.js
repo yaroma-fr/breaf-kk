@@ -411,7 +411,7 @@ function collectPayments() {
     });
 }
 
-function initDownloadButton() {
+function initDownloadWordButton() {
     const button = document.getElementById("downloadBtn");
 
     if (!button) {
