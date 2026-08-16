@@ -411,17 +411,17 @@ function collectPayments() {
     });
 }
 
-function initDownloadWordButton() {
-    const button = document.getElementById("downloadWordBtn");
+function initDownloadButton() {
+    const button = document.getElementById("downloadBtn");
 
     if (!button) {
-        console.warn("downloadWordBtn not found");
+        console.warn("downloadBtn not found");
         return;
     }
 
     button.addEventListener("click", function () {
         const data = collectBriefData();
-        const html = buildWordDocumentHtml(data);
+        const html = buildDocumentHtml(data);
 
         downloadWordDocument(html, data);
     });
@@ -846,7 +846,7 @@ function downloadWordDocument(html, data) {
     const projectName = data.general.projectName || "Brief";
 
     const safeFileName = makeSafeFileName(
-        "Brief_" + projectNo + "_" + projectName + ".doc"
+        "Brief_" + projectNo + "_" + projectName + ".docx"
     );
 
     const blob = new Blob(["\ufeff", html], {
