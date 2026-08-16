@@ -392,6 +392,12 @@ function getTimingFormat() {
 }
 
 function collectStages() {
+    const timingFormat = getRadioValue("timingFormat");
+
+    if (timingFormat !== "Кілька етапів і окремий акт по кожному етапу") {
+        return [];
+    }
+
     const rows = document.querySelectorAll("#stagesTable tbody tr");
 
     return Array.from(rows).map(function (row, index) {
@@ -662,9 +668,10 @@ function buildWordDocumentHtml(data) {
         </tr>
     </table>
 
-    <h2>6. Етапи робіт</h2>
-
-    ${buildStagesWordTable(data.stages)}
+    ${data.stages && data.stages.length > 0 ? `
+        <h2>6. Етапи робіт</h2>
+        ${buildStagesWordTable(data.stages)}
+    ` : ""}
 
     <h2>7. Вартість</h2>
 
