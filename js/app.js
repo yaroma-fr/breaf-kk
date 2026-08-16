@@ -412,16 +412,16 @@ function collectPayments() {
 }
 
 function initDownloadWordButton() {
-    const button = document.getElementById("downloadBtn");
+    const button = document.getElementById("downloadWordBtn");
 
     if (!button) {
-        console.warn("downloadBtn not found");
+        console.warn("downloadWordBtn not found");
         return;
     }
 
     button.addEventListener("click", function () {
         const data = collectBriefData();
-        const html = buildDocumentHtml(data);
+        const html = buildWordDocumentHtml(data);
 
         downloadWordDocument(html, data);
     });
