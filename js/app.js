@@ -527,7 +527,7 @@ function buildWordDocumentHtml(data) {
 
         <tr>
             <td class="label">Який документ потрібно підготувати</td>
-            <td class="value">${escapeHtml(data.generalumentType)}</td>
+            <td class="value">${escapeHtml(data.general.documentType)}</td>
         </tr>
     </table>
 
@@ -554,7 +554,7 @@ function buildWordDocumentHtml(data) {
 
         <tr>
             <td class="label">Мета документу</td>
-            <td class="value">${escapeHtml(data.legalumentPurpose)}</td>
+            <td class="value">${escapeHtml(data.legal.documentPurpose)}</td>
         </tr>
     </table>
 
@@ -846,7 +846,7 @@ function downloadWordDocument(html, data) {
     const projectName = data.general.projectName || "Brief";
 
     const safeFileName = makeSafeFileName(
-        "Brief_" + projectNo + "_" + projectName + "x"
+        "Brief_" + projectNo + "_" + projectName + ".docx"
     );
 
     const blob = new Blob(["\ufeff", html], {
@@ -926,7 +926,7 @@ function downloadWordDocument(html, data) {
     const projectName = data.general.projectName || "Brief";
 
     const safeFileName = makeSafeFileName(
-        "Brief_" + projectNo + "_" + projectName + ".doc"
+        "Brief_" + projectNo + "_" + projectName + ".docx"
     );
 
     const blob = new Blob(["\ufeff", html], {
