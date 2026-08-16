@@ -222,7 +222,7 @@
                 </div>
 
                 <div class="form-row">
-                    <label for="worksectionLink">Посилання на гілку Worksection</label>
+                    <label for="worksectionLink">Посилання на гілку Worksection де перевіряли підрядника</label>
                     <input id="worksectionLink" name="worksectionLink" type="url" placeholder="https://...">
                 </div>
 
@@ -296,12 +296,16 @@
                 <h2>3. Що саме має зробити підрядник</h2>
 
                 <div class="form-row">
-                    <label for="serviceShortName">Коротка назва послуг / робіт *</label>
+                    <label for="serviceShortName">Коротка назва послуг / робіт (приклад: розробка дизайну) *</label>
                     <input id="serviceShortName" name="serviceShortName" type="text" required>
                 </div>
 
                 <div class="form-row textarea-row">
-                    <label for="serviceDescription">Детальний опис послуг / робіт *</label>
+                    <label for="serviceDescription">Детальний опис послуг / робіт * 
+                        <span class="hint">
+                            ( Опишіть простими словами, що саме робить підрядник, який результат має передати, у яких форматах, обсягах або кількості)
+                            </span>
+                        </label>
                     <textarea id="serviceDescription" name="serviceDescription" required></textarea>
                 </div>
 
