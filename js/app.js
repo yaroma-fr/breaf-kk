@@ -316,7 +316,8 @@ function collectBriefData() {
         services: {
             serviceShortName: getValue("serviceShortName"),
             serviceDescription: getValue("serviceDescription"),
-            clientContractReference: getValue("clientContractReference")
+            clientContractReference: getValue("clientContractReference"),
+            serviceExtation: getValue("serviceExtation")
         },
 
         timing: {
@@ -630,7 +631,7 @@ function buildWordDocumentHtml(data) {
         </tr>
     </table>
 
-    <h2>4. Що саме має зробити підрядник</h2>
+    <h2>3. Що саме має зробити підрядник</h2>
 
     <table>
         <tr>
@@ -646,6 +647,15 @@ function buildWordDocumentHtml(data) {
         <tr>
             <td class="label">Як відображені послуги з клієнтом</td>
             <td class="value">${escapeHtml(data.services.clientContractReference)}</td>
+        </tr>
+    </table>
+
+    <h2>4. ТЗ/Замовлення Клієнта/Додаток</h2>
+
+    <table>
+        <tr>
+            <td class="label">За яким ТЗ/Додатком/Замовлення плануємо закриватись (у разі наявності інформації)</td>
+            <td class="value">${escapeHtml(data.services.serviceExtation)}</td>
         </tr>
     </table>
 
@@ -673,7 +683,7 @@ function buildWordDocumentHtml(data) {
         ${buildStagesWordTable(data.stages)}
     ` : ""}
 
-    <h2>7. Вартість</h2>
+    <h2>6. Вартість</h2>
 
     <table>
         <tr>
@@ -712,11 +722,11 @@ function buildWordDocumentHtml(data) {
         </tr>
     </table>
 
-    <h2>8. Порядок оплати</h2>
+    <h2>7. Порядок оплати</h2>
 
     ${buildPaymentsWordTable(data.payments)}
 
-    <h2>9. Інтелектуальна власність</h2>
+    <h2>8. Інтелектуальна власність</h2>
 
     <table>
         <tr>
@@ -740,7 +750,7 @@ function buildWordDocumentHtml(data) {
         </tr>
     </table>
 
-    <h2>10. Додаткові та ризикові умови</h2>
+    <h2>9. Додаткові та ризикові умови</h2>
 
     <table>
         <tr>
