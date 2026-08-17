@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-    initDynamicFields();
-    initStagesTable();
-    initPaymentsTable();
-    initDownloadWordButton();
+  initDynamicFields();
+  initStagesTable();
+  initPaymentsTable();
+  initDownloadWordButton();
 
-    initExclusiveCheckboxGroup("ipItems", "Ні, нічого з цього");
-    initExclusiveCheckboxGroup("fileLinks", "Відсутній");
-
+  initExclusiveCheckboxGroup("ipItems", "Ні, нічого з цього");
+  initExclusiveCheckboxGroup("fileLinks", "Відсутній");
 });
 
 /* ================================
@@ -14,36 +13,36 @@ document.addEventListener("DOMContentLoaded", function () {
 ================================ */
 
 function getRadioValue(name) {
-    const checked = document.querySelector(`input[name="${name}"]:checked`);
-    return checked ? checked.value : "";
+  const checked = document.querySelector(`input[name="${name}"]:checked`);
+  return checked ? checked.value : "";
 }
 
 function getValue(id) {
-    const element = document.getElementById(id);
-    return element ? element.value.trim() : "";
+  const element = document.getElementById(id);
+  return element ? element.value.trim() : "";
 }
 
 function showElementById(id, shouldShow) {
-    const element = document.getElementById(id);
+  const element = document.getElementById(id);
 
-    if (!element) {
-        console.warn("Element not found:", id);
-        return;
-    }
+  if (!element) {
+    console.warn("Element not found:", id);
+    return;
+  }
 
-    if (shouldShow) {
-        element.classList.remove("hidden");
-    } else {
-        element.classList.add("hidden");
-    }
+  if (shouldShow) {
+    element.classList.remove("hidden");
+  } else {
+    element.classList.add("hidden");
+  }
 }
 
 function collectCheckedValues(name) {
-    const checked = document.querySelectorAll(`input[name="${name}"]:checked`);
+  const checked = document.querySelectorAll(`input[name="${name}"]:checked`);
 
-    return Array.from(checked).map(function (item) {
-        return item.value;
-    });
+  return Array.from(checked).map(function (item) {
+    return item.value;
+  });
 }
 
 /* ================================
@@ -51,140 +50,130 @@ function collectCheckedValues(name) {
 ================================ */
 
 function initDynamicFields() {
+  // Який документ потрібно підготувати -> Інше
+  document
+    .querySelectorAll('input[name="documentType"]')
+    .forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        const value = getRadioValue("documentType");
 
-    // Який документ потрібно підготувати -> Інше
-    document.querySelectorAll('input[name="documentType"]').forEach(function (radio) {
-        radio.addEventListener("change", function () {
-            const value = getRadioValue("documentType");
-
-            showElementById(
-                "documentOtherRow",
-                value === "Інше"
-            );
-        });
+        showElementById("documentOtherRow", value === "Інше");
+      });
     });
 
-    // ПДВ
-    document.querySelectorAll('input[name="contractorVat"]').forEach(function (radio) {
-        radio.addEventListener("change", function () {
-            const value = getRadioValue("contractorVat");
-            const isVatPayer = value === "Так";
+  // ПДВ
+  document
+    .querySelectorAll('input[name="contractorVat"]')
+    .forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        const value = getRadioValue("contractorVat");
+        const isVatPayer = value === "Так";
 
-            showElementById("vatAmountRow", isVatPayer);
-            showElementById("costWithVatRow", isVatPayer);
+        showElementById("vatAmountRow", isVatPayer);
+        showElementById("costWithVatRow", isVatPayer);
 
-            if (!isVatPayer) {
-                document.getElementById("vatAmount").value = "";
-                document.getElementById("costWithVat").value = "";
-            }
-        });
+        if (!isVatPayer) {
+          document.getElementById("vatAmount").value = "";
+          document.getElementById("costWithVat").value = "";
+        }
+      });
     });
 
-    // Юридична особа
-    document.querySelectorAll('input[name="legalEntity"]').forEach(function (radio) {
-        radio.addEventListener("change", function () {
-            const value = getRadioValue("legalEntity");
+  // Юридична особа
+  document
+    .querySelectorAll('input[name="legalEntity"]')
+    .forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        const value = getRadioValue("legalEntity");
 
-            showElementById(
-                "fopNameRow",
-                value === "Внутрішній ФОП"
-            );
+        showElementById("fopNameRow", value === "Внутрішній ФОП");
 
-            showElementById(
-                "legalOtherRow",
-                value === "Інше"
-            );
+        showElementById("legalOtherRow", value === "Інше");
 
-            const needReason =
-                value === "ТОВ «СЕРВІС ХАБ»" ||
-                value === "ТОВ «АДВЕЙС ЛІДЕР»" ||
-                value === "Внутрішній ФОП";
+        const needReason =
+          value === "ТОВ «СЕРВІС ХАБ»" ||
+          value === "ТОВ «АДВЕЙС ЛІДЕР»" ||
+          value === "Внутрішній ФОП";
 
-            showElementById(
-                "nonFrontAgencyReasonRow",
-                needReason
-            );
-        });
+        showElementById("nonFrontAgencyReasonRow", needReason);
+      });
     });
 
-    // Чи працювали з підрядником раніше
-    document.querySelectorAll('input[name="workedBefore"]').forEach(function (radio) {
-        radio.addEventListener("change", function () {
-            const value = getRadioValue("workedBefore");
+  // Чи працювали з підрядником раніше
+  document
+    .querySelectorAll('input[name="workedBefore"]')
+    .forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        const value = getRadioValue("workedBefore");
 
-            showElementById(
-                "workedBeforeDetailsRow",
-                value === "Так"
-            );
-        });
+        showElementById("workedBeforeDetailsRow", value === "Так");
+      });
     });
 
-    // Чи працює у Вчасно
-    document.querySelectorAll('input[name="vchasno"]').forEach(function (radio) {
-        radio.addEventListener("change", function () {
-            const value = getRadioValue("vchasno");
+  // Чи працює у Вчасно
+  document.querySelectorAll('input[name="vchasno"]').forEach(function (radio) {
+    radio.addEventListener("change", function () {
+      const value = getRadioValue("vchasno");
 
-            showElementById(
-                "vchasnoEmailRow",
-                value === "Так" || value === "Інше"
-            );
-        });
+      showElementById("vchasnoEmailRow", value === "Так" || value === "Інше");
+    });
+  });
+
+  // Формат виконання -> Інше
+  document
+    .querySelectorAll('input[name="timingFormat"]')
+    .forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        const value = getRadioValue("timingFormat");
+
+        // Поле для варіанту "Інше"
+        showElementById("timingFormatOtherRow", value === "Інше");
+        // Блок етапів робіт
+        showElementById(
+          "section-stages",
+          value === "Кілька етапів і окремий акт по кожному етапу",
+        );
+      });
     });
 
-    // Формат виконання -> Інше
-    document.querySelectorAll('input[name="timingFormat"]').forEach(function (radio) {
-        radio.addEventListener("change", function () {
-            const value = getRadioValue("timingFormat");
+  // ПДВ
+  document
+    .querySelectorAll('input[name="contractorVat"]')
+    .forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        const value = getRadioValue("contractorVat");
+        const isVatPayer = value === "Так";
 
-           // Поле для варіанту "Інше"
-            showElementById(
-            "timingFormatOtherRow",
-            value === "Інше"
-            );
-            // Блок етапів робіт
-            showElementById(
-            "section-stages",
-            value === "Кілька етапів і окремий акт по кожному етапу"
-    );
-        });
-    });
-
-    // ПДВ
-    document.querySelectorAll('input[name="contractorVat"]').forEach(function (radio) {
-        radio.addEventListener("change", function () {
-            const value = getRadioValue("contractorVat");
-            const isVatPayer = value === "Так";
-
-            showElementById("vatAmountRow", isVatPayer);
-            showElementById("costWithVatRow", isVatPayer);
-        });
+        showElementById("vatAmountRow", isVatPayer);
+        showElementById("costWithVatRow", isVatPayer);
+      });
     });
 }
 
 function initExclusiveCheckboxGroup(groupName, noneValue) {
-    const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+  const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
 
-    checkboxes.forEach(function (checkbox) {
-        checkbox.addEventListener("change", function () {
-            const isNoneOption = checkbox.value === noneValue;
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener("change", function () {
+      const isNoneOption = checkbox.value === noneValue;
 
-            if (isNoneOption && checkbox.checked) {
-                checkboxes.forEach(function (item) {
-                    if (item.value !== noneValue) {
-                        item.checked = false;
-                    }
-                });
-            }
-
-            if (!isNoneOption && checkbox.checked) {
-                checkboxes.forEach(function (item) {
-                    if (item.value === noneValue) {
-                        item.checked = false;
-                    }
-                });
-            }
+      if (isNoneOption && checkbox.checked) {
+        checkboxes.forEach(function (item) {
+          if (item.value !== noneValue) {
+            item.checked = false;
+          }
         });
+      }
+
+      if (!isNoneOption && checkbox.checked) {
+        checkboxes.forEach(function (item) {
+          if (item.value === noneValue) {
+            item.checked = false;
+          }
+        });
+      }
     });
+  });
 }
 
 /* ================================
@@ -192,41 +181,41 @@ function initExclusiveCheckboxGroup(groupName, noneValue) {
 ================================ */
 
 function initStagesTable() {
-    const addStageBtn = document.getElementById("addStageBtn");
-    const stagesTable = document.getElementById("stagesTable");
+  const addStageBtn = document.getElementById("addStageBtn");
+  const stagesTable = document.getElementById("stagesTable");
 
-    if (!addStageBtn || !stagesTable) {
-        console.warn("Stages elements not found");
-        return;
+  if (!addStageBtn || !stagesTable) {
+    console.warn("Stages elements not found");
+    return;
+  }
+
+  addStageBtn.addEventListener("click", function () {
+    addStageRow();
+  });
+
+  stagesTable.addEventListener("click", function (event) {
+    if (event.target.classList.contains("remove-row")) {
+      const row = event.target.closest("tr");
+
+      if (row) {
+        row.remove();
+        renumberStages();
+      }
     }
-
-    addStageBtn.addEventListener("click", function () {
-        addStageRow();
-    });
-
-    stagesTable.addEventListener("click", function (event) {
-        if (event.target.classList.contains("remove-row")) {
-            const row = event.target.closest("tr");
-
-            if (row) {
-                row.remove();
-                renumberStages();
-            }
-        }
-    });
+  });
 }
 
 function addStageRow() {
-    const tbody = document.querySelector("#stagesTable tbody");
+  const tbody = document.querySelector("#stagesTable tbody");
 
-    if (!tbody) {
-        console.warn("Stages tbody not found");
-        return;
-    }
+  if (!tbody) {
+    console.warn("Stages tbody not found");
+    return;
+  }
 
-    const row = document.createElement("tr");
+  const row = document.createElement("tr");
 
-    row.innerHTML = `
+  row.innerHTML = `
         <td class="stage-number"></td>
         <td>
             <textarea name="stageWork[]" placeholder="Опишіть роботи"></textarea>
@@ -242,16 +231,16 @@ function addStageRow() {
         </td>
     `;
 
-    tbody.appendChild(row);
-    renumberStages();
+  tbody.appendChild(row);
+  renumberStages();
 }
 
 function renumberStages() {
-    const numbers = document.querySelectorAll("#stagesTable .stage-number");
+  const numbers = document.querySelectorAll("#stagesTable .stage-number");
 
-    numbers.forEach(function (cell, index) {
-        cell.textContent = index + 1;
-    });
+  numbers.forEach(function (cell, index) {
+    cell.textContent = index + 1;
+  });
 }
 
 /* ================================
@@ -259,41 +248,41 @@ function renumberStages() {
 ================================ */
 
 function initPaymentsTable() {
-    const addPaymentBtn = document.getElementById("addPaymentBtn");
-    const paymentsTable = document.getElementById("paymentsTable");
+  const addPaymentBtn = document.getElementById("addPaymentBtn");
+  const paymentsTable = document.getElementById("paymentsTable");
 
-    if (!addPaymentBtn || !paymentsTable) {
-        console.warn("Payments elements not found");
-        return;
+  if (!addPaymentBtn || !paymentsTable) {
+    console.warn("Payments elements not found");
+    return;
+  }
+
+  addPaymentBtn.addEventListener("click", function () {
+    addPaymentRow();
+  });
+
+  paymentsTable.addEventListener("click", function (event) {
+    if (event.target.classList.contains("remove-row")) {
+      const row = event.target.closest("tr");
+
+      if (row) {
+        row.remove();
+        renumberPayments();
+      }
     }
-
-    addPaymentBtn.addEventListener("click", function () {
-        addPaymentRow();
-    });
-
-    paymentsTable.addEventListener("click", function (event) {
-        if (event.target.classList.contains("remove-row")) {
-            const row = event.target.closest("tr");
-
-            if (row) {
-                row.remove();
-                renumberPayments();
-            }
-        }
-    });
+  });
 }
 
 function addPaymentRow() {
-    const tbody = document.querySelector("#paymentsTable tbody");
+  const tbody = document.querySelector("#paymentsTable tbody");
 
-    if (!tbody) {
-        console.warn("Payments tbody not found");
-        return;
-    }
+  if (!tbody) {
+    console.warn("Payments tbody not found");
+    return;
+  }
 
-    const row = document.createElement("tr");
+  const row = document.createElement("tr");
 
-    row.innerHTML = `
+  row.innerHTML = `
         <td class="payment-number"></td>
         <td>
             <input name="paymentAmount[]" type="text" placeholder="10000">
@@ -309,16 +298,16 @@ function addPaymentRow() {
         </td>
     `;
 
-    tbody.appendChild(row);
-    renumberPayments();
+  tbody.appendChild(row);
+  renumberPayments();
 }
 
 function renumberPayments() {
-    const numbers = document.querySelectorAll("#paymentsTable .payment-number");
+  const numbers = document.querySelectorAll("#paymentsTable .payment-number");
 
-    numbers.forEach(function (cell, index) {
-        cell.textContent = index + 1;
-    });
+  numbers.forEach(function (cell, index) {
+    cell.textContent = index + 1;
+  });
 }
 
 /* ================================
@@ -326,168 +315,170 @@ function renumberPayments() {
 ================================ */
 
 function collectBriefData() {
-    return {
-        general: {
-            managerName: getValue("managerName"),
-            managerEmail: getValue("managerEmail"),
-            clientName: getValue("clientName"),
-            projectName: getValue("projectName"),
-            projectNo: getValue("projectNo"),
-            documentType: getDocumentType()
-        },
+  return {
+    general: {
+      managerName: getValue("managerName"),
+      managerEmail: getValue("managerEmail"),
+      clientName: getValue("clientName"),
+      projectName: getValue("projectName"),
+      projectNo: getValue("projectNo"),
+      documentType: getDocumentType(),
+    },
 
-        legal: {
-            legalEntity: getLegalEntity(),
-            fopName: getValue("fopName"),
-            legalOther: getValue("legalOther"),
-            nonFrontAgencyReason: getValue("nonFrontAgencyReason"),
-            documentPurpose: getRadioValue("documentPurpose")
-        },
+    legal: {
+      legalEntity: getLegalEntity(),
+      fopName: getValue("fopName"),
+      legalOther: getValue("legalOther"),
+      nonFrontAgencyReason: getValue("nonFrontAgencyReason"),
+      documentPurpose: getRadioValue("documentPurpose"),
+      legalEntityType: getRadioValue("legalEntity"),
+    },
 
-        contractor: {
-            activityName: getValue("activityName"),
-            activityLocation: getValue("activityLocation"),
-            activityDate: getValue("activityDate"),
-            contractorName: getValue("contractorName"),
-            contractorVat: getRadioValue("contractorVat"),
-            worksectionLink: getValue("worksectionLink"),
-            contractorEmail: getValue("contractorEmail"),
-            contractorPhone: getValue("contractorPhone"),
-            workedBefore: getRadioValue("workedBefore"),
-            workedBeforeDetails: getValue("workedBeforeDetails"),
-            vchasno: getRadioValue("vchasno"),
-            vchasnoEmail: getValue("vchasnoEmail")
-        },
+    contractor: {
+      activityName: getValue("activityName"),
+      activityLocation: getValue("activityLocation"),
+      activityDate: getValue("activityDate"),
+      contractorName: getValue("contractorName"),
+      contractorVat: getRadioValue("contractorVat"),
+      worksectionLink: getValue("worksectionLink"),
+      contractorEmail: getValue("contractorEmail"),
+      contractorPhone: getValue("contractorPhone"),
+      workedBefore: getRadioValue("workedBefore"),
+      workedBeforeDetails: getValue("workedBeforeDetails"),
+      vchasno: getRadioValue("vchasno"),
+      vchasnoEmail: getValue("vchasnoEmail"),
+    },
 
-        services: {
-            serviceShortName: getValue("serviceShortName"),
-            serviceDescription: getValue("serviceDescription"),
-            clientContractReference: getValue("clientContractReference"),
-            serviceExtation: getValue("serviceExtation")
-        },
+    services: {
+      serviceShortName: getValue("serviceShortName"),
+      serviceDescription: getValue("serviceDescription"),
+      clientContractReference: getValue("clientContractReference"),
+      serviceExtation: getValue("serviceExtation"),
+    },
 
-        timing: {
-            startDate: getValue("startDate"),
-            finishDate: getValue("finishDate"),
-            timingFormat: getTimingFormat()
-        },
+    timing: {
+      startDate: getValue("startDate"),
+      finishDate: getValue("finishDate"),
+      timingFormat: getTimingFormat(),
+    },
 
-        stages: collectStages(),
+    stages: collectStages(),
 
-        cost: {
-            costUkr: getValue("costUkr"),
-            costNoVat: getValue("costNoVat"),
-            vatAmount: getValue("vatAmount"),
-            costWithVat: getValue("costWithVat"),
-            currency: getValue("currency"),
-            foreignCost: getValue("foreignCost"),
-            foreignCurrency: getValue("foreignCurrency")
-        },
+    cost: {
+      costUkr: getValue("costUkr"),
+      costNoVat: getValue("costNoVat"),
+      vatAmount: getValue("vatAmount"),
+      costWithVat: getValue("costWithVat"),
+      currency: getValue("currency"),
+      foreignCost: getValue("foreignCost"),
+      foreignCurrency: getValue("foreignCurrency"),
+    },
 
-        payments: collectPayments(),
+    payments: collectPayments(),
 
-        intellectualProperty: {
-            ipItems: collectCheckedValues("ipItems"),
-            ipDescription: getValue("ipDescription"),
-            usageRestrictions: getValue("usageRestrictions"),
-            clientRights: getValue("clientRights")
-        },
+    intellectualProperty: {
+      ipItems: collectCheckedValues("ipItems"),
+      ipDescription: getValue("ipDescription"),
+      usageRestrictions: getValue("usageRestrictions"),
+      clientRights: getValue("clientRights"),
+    },
 
-        risks: {
-            riskConditions: getValue("riskConditions")
-        },
+    risks: {
+      riskConditions: getValue("riskConditions"),
+    },
 
-        files: {
-            fileLinks: collectCheckedValues("fileLinks"),
-            additionalLinks: getValue("additionalLinks")
-        }
-    };
+    files: {
+      fileLinks: collectCheckedValues("fileLinks"),
+      additionalLinks: getValue("additionalLinks"),
+    },
+  };
 }
 
 function getDocumentType() {
-    const value = getRadioValue("documentType");
+  const value = getRadioValue("documentType");
 
-    if (value === "Інше") {
-        return getValue("documentOther");
-    }
+  if (value === "Інше") {
+    return getValue("documentOther");
+  }
 
-    return value;
+  return value;
 }
 
 function getLegalEntity() {
-    const value = getRadioValue("legalEntity");
+  const value = getRadioValue("legalEntity");
 
-    if (value === "Внутрішній ФОП") {
-        return "Внутрішній ФОП - " + getValue("fopName");
-    }
+  if (value === "Внутрішній ФОП") {
+    return "Внутрішній ФОП: " + getValue("fopName");
+  }
 
-    if (value === "Інше") {
-        return getValue("legalOther");
-    }
+  if (value === "Інше") {
+    return getValue("legalOther");
+  }
 
-    return value;
+  return value;
 }
 
 function getTimingFormat() {
-    const value = getRadioValue("timingFormat");
+  const value = getRadioValue("timingFormat");
 
-    if (value === "Інше") {
-        return getValue("timingFormatOther");
-    }
+  if (value === "Інше") {
+    return getValue("timingFormatOther");
+  }
 
-    return value;
+  return value;
 }
 
 function collectStages() {
-    const timingFormat = getRadioValue("timingFormat");
+  const timingFormat = getRadioValue("timingFormat");
 
-    if (timingFormat !== "Кілька етапів і окремий акт по кожному етапу") {
-        return [];
-    }
+  if (timingFormat !== "Кілька етапів і окремий акт по кожному етапу") {
+    return [];
+  }
 
-    const rows = document.querySelectorAll("#stagesTable tbody tr");
+  const rows = document.querySelectorAll("#stagesTable tbody tr");
 
-    return Array.from(rows).map(function (row, index) {
-        return {
-            stageNo: index + 1,
-            work: row.querySelector('[name="stageWork[]"]')?.value.trim() || "",
-            period: row.querySelector('[name="stagePeriod[]"]')?.value.trim() || "",
-            amount: row.querySelector('[name="stageAmount[]"]')?.value.trim() || ""
-        };
-    });
+  return Array.from(rows).map(function (row, index) {
+    return {
+      stageNo: index + 1,
+      work: row.querySelector('[name="stageWork[]"]')?.value.trim() || "",
+      period: row.querySelector('[name="stagePeriod[]"]')?.value.trim() || "",
+      amount: row.querySelector('[name="stageAmount[]"]')?.value.trim() || "",
+    };
+  });
 }
 
 function collectPayments() {
-    const rows = document.querySelectorAll("#paymentsTable tbody tr");
+  const rows = document.querySelectorAll("#paymentsTable tbody tr");
 
-    return Array.from(rows).map(function (row, index) {
-        return {
-            paymentNo: index + 1,
-            amount: row.querySelector('[name="paymentAmount[]"]')?.value.trim() || "",
-            payDate: row.querySelector('[name="paymentDate[]"]')?.value || "",
-            comment: row.querySelector('[name="paymentComment[]"]')?.value.trim() || ""
-        };
-    });
+  return Array.from(rows).map(function (row, index) {
+    return {
+      paymentNo: index + 1,
+      amount: row.querySelector('[name="paymentAmount[]"]')?.value.trim() || "",
+      payDate: row.querySelector('[name="paymentDate[]"]')?.value || "",
+      comment:
+        row.querySelector('[name="paymentComment[]"]')?.value.trim() || "",
+    };
+  });
 }
 
 function initDownloadWordButton() {
-    const button = document.getElementById("downloadWordBtn");
+  const button = document.getElementById("downloadWordBtn");
 
-    if (!button) {
-        console.warn("downloadWordBtn not found");
-        return;
-    }
+  if (!button) {
+    console.warn("downloadWordBtn not found");
+    return;
+  }
 
-    button.addEventListener("click", function () {
-        const data = collectBriefData();
-        const html = buildWordDocumentHtml(data);
+  button.addEventListener("click", function () {
+    const data = collectBriefData();
+    const html = buildWordDocumentHtml(data);
 
-        downloadWordDocument(html, data);
-    });
+    downloadWordDocument(html, data);
+  });
 }
 
 function buildWordDocumentHtml(data) {
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -595,21 +586,40 @@ function buildWordDocumentHtml(data) {
             <td class="label">Юридична особа зі сторони Adsapience</td>
             <td class="value">${escapeHtml(data.legal.legalEntity)}</td>
         </tr>
-
-        <tr>
-            <td class="label">Назва ФОП</td>
-            <td class="value">${escapeHtml(data.legal.fopName)}</td>
-        </tr>
-
+        ${
+          data.legal.fopName
+            ? `
+                <tr>
+                    <td class="label">Назва ФОП</td>
+                    <td class="value">${escapeHtml(data.legal.fopName)}</td>
+                </tr>
+        `
+            : ""
+        }
+        ${
+          data.legal.legalOther
+            ? `
         <tr>
             <td class="label">Інша юридична особа</td>
             <td class="value">${escapeHtml(data.legal.legalOther)}</td>
         </tr>
+         `
+            : ""
+        }
 
-        <tr>
-            <td class="label">Причина закриття не на фронтальне агентство</td>
-            <td class="value">${escapeHtml(data.legal.nonFrontAgencyReason)}</td>
-        </tr>
+        ${
+          ["ТОВ «СЕРВІС ХАБ»", "ТОВ «АДВЕЙС ЛІДЕР»", "Внутрішній ФОП"].includes(
+            data.legal.legalEntityType,
+          )
+            ? `
+    <tr>
+        <td class="label">Причина закриття не на фронтальне агентство</td>
+        <td class="value">${escapeHtml(data.legal.nonFrontAgencyReason)}</td>
+    </tr>
+`
+            : ""
+        }
+     
 
         <tr>
             <td class="label">Мета документу</td>
@@ -663,16 +673,22 @@ function buildWordDocumentHtml(data) {
         <tr>
             <td class="label">Чи працювали з підрядником раніше</td>
             <td class="value">
-                ${escapeHtml(data.contractor.workedBefore)}
-                ${escapeHtml(data.contractor.workedBeforeDetails)}
+                ${
+                  data.contractor.workedBefore === "Так"
+                    ? "Так: " + escapeHtml(data.contractor.workedBeforeDetails)
+                    : escapeHtml(data.contractor.workedBefore)
+                }
             </td>
         </tr>
 
         <tr>
             <td class="label">Чи працює підрядник у Вчасно</td>
             <td class="value">
-                ${escapeHtml(data.contractor.vchasno)}
-                ${escapeHtml(data.contractor.vchasnoEmail)}
+                ${
+                  data.contractor.vchasno === "Так"
+                    ? "Так: " + escapeHtml(data.contractor.vchasnoEmail)
+                    : escapeHtml(data.contractor.vchasno)
+                }
             </td>
         </tr>
     </table>
@@ -724,10 +740,14 @@ function buildWordDocumentHtml(data) {
         </tr>
     </table>
 
-    ${data.stages && data.stages.length > 0 ? `
-        <h2>6. Етапи робіт</h2>
+    ${
+      data.stages && data.stages.length > 0
+        ? `
+        <h2>Етапи робіт</h2>
         ${buildStagesWordTable(data.stages)}
-    ` : ""}
+    `
+        : ""
+    }
 
     <h2>6. Вартість і порядок оплати</h2>
 
@@ -739,7 +759,9 @@ function buildWordDocumentHtml(data) {
             <td class="value">${escapeHtml(data.cost.costNoVat)}</td>
         </tr>
 
-        ${data.contractor.contractorVat === "Так" ? `
+        ${
+          data.contractor.contractorVat === "Так"
+            ? `
         <tr>
             <td class="label">ПДВ</td>
             <td class="value">${escapeHtml(data.cost.vatAmount)}</td>
@@ -749,7 +771,9 @@ function buildWordDocumentHtml(data) {
             <td class="label">Загальна вартість з ПДВ</td>
             <td class="value">${escapeHtml(data.cost.costWithVat)}</td>
         </tr>
-        ` : ""}
+        `
+            : ""
+        }
 
         <tr>
             <td class="label">Валюта</td>
@@ -784,7 +808,7 @@ function buildWordDocumentHtml(data) {
         </tr>
 
         <tr>
-            <td class="label">Якщо так, що саме створюється</td>
+            <td class="label">Якщо так, що саме створюється?</td>
             <td class="value">${escapeHtml(data.intellectualProperty.ipDescription)}</td>
         </tr>
 
@@ -794,7 +818,7 @@ function buildWordDocumentHtml(data) {
         </tr>
 
         <tr>
-            <td class="label">Чи потрібні авторські права клієнту</td>
+            <td class="label">Чи потрібні авторські права клієнту (банку)</td>
             <td class="value">${escapeHtml(data.intellectualProperty.clientRights)}</td>
         </tr>
     </table>
@@ -803,7 +827,8 @@ function buildWordDocumentHtml(data) {
 
     <table>
         <tr>
-            <td class="label">Домовленості з підрядником</td>
+            <td class="label">Будь-які домовленості з підрядником, 
+            які обов’язково потрібно включити в документ</td>
             <td class="value">${escapeHtml(data.risks.riskConditions)}</td>
         </tr>
     </table>
@@ -812,7 +837,8 @@ function buildWordDocumentHtml(data) {
 
     <table>
         <tr>
-            <td class="label">Документ з підрядником, що описує або деталізує послугу</td>
+            <td class="label">Чи наявний будь-який документ з підрядником, 
+            що описує або деталізує послугу? </td>
             <td class="value">${escapeHtml(data.files.fileLinks.join(", "))}</td>
         </tr>
 
@@ -828,14 +854,14 @@ function buildWordDocumentHtml(data) {
 }
 
 function buildStagesWordTable(stages) {
-    if (!stages || stages.length === 0) {
-        return "<p>Етапи не заповнені.</p>";
-    }
+  if (!stages || stages.length === 0) {
+    return "<p>Етапи не заповнені.</p>";
+  }
 
-    let rows = "";
+  let rows = "";
 
-    stages.forEach(function (stage) {
-        rows += `
+  stages.forEach(function (stage) {
+    rows += `
             <tr>
                 <td>${escapeHtml(stage.stageNo)}</td>
                 <td>${escapeHtml(stage.work)}</td>
@@ -843,9 +869,9 @@ function buildStagesWordTable(stages) {
                 <td>${escapeHtml(stage.amount)}</td>
             </tr>
         `;
-    });
+  });
 
-    return `
+  return `
         <table>
             <thead>
                 <tr>
@@ -864,14 +890,14 @@ function buildStagesWordTable(stages) {
 }
 
 function buildPaymentsWordTable(payments) {
-    if (!payments || payments.length === 0) {
-        return "<p>Графік оплат не заповнений.</p>";
-    }
+  if (!payments || payments.length === 0) {
+    return "<p>Графік оплат не заповнений.</p>";
+  }
 
-    let rows = "";
+  let rows = "";
 
-    payments.forEach(function (payment) {
-        rows += `
+  payments.forEach(function (payment) {
+    rows += `
             <tr>
                 <td>${escapeHtml(payment.paymentNo)}</td>
                 <td>${escapeHtml(payment.amount)}</td>
@@ -879,9 +905,9 @@ function buildPaymentsWordTable(payments) {
                 <td>${escapeHtml(payment.comment)}</td>
             </tr>
         `;
-    });
+  });
 
-    return `
+  return `
         <table>
             <thead>
                 <tr>
@@ -900,59 +926,57 @@ function buildPaymentsWordTable(payments) {
 }
 
 function escapeHtml(value) {
-    if (value === null || value === undefined) {
-        return "";
-    }
+  if (value === null || value === undefined) {
+    return "";
+  }
 
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;")
-        .replaceAll("\n", "<br>");
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;")
+    .replaceAll("\n", "<br>");
 }
 
 function downloadWordDocument(html, data) {
-    const projectNo = data.general.projectNo || "NoProject";
-    const projectName = data.general.projectName || "Brief";
+  const projectNo = data.general.projectNo || "NoProject";
+  const projectName = data.general.projectName || "Brief";
 
-    const safeFileName = makeSafeFileName(
-        "Brief_" + projectNo + "_" + projectName + ".doc"
-    );
+  const safeFileName = makeSafeFileName(
+    "Brief_" + projectNo + "_" + projectName + ".doc",
+  );
 
-    const blob = new Blob(["\ufeff", html], {
-        type: "application/msword;charset=utf-8"
-    });
+  const blob = new Blob(["\ufeff", html], {
+    type: "application/msword;charset=utf-8",
+  });
 
-    const url = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = safeFileName;
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = safeFileName;
 
-    document.body.appendChild(link);
-    link.click();
+  document.body.appendChild(link);
+  link.click();
 
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 function makeSafeFileName(fileName) {
-    return fileName
-        .replace(/[\\/:*?"<>|]/g, "_")
-        .replace(/\s+/g, "_");
+  return fileName.replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_");
 }
 
 function buildPaymentsWordTable(payments) {
-    if (!payments || payments.length === 0) {
-        return "<p>Графік оплат не заповнений.</p>";
-    }
+  if (!payments || payments.length === 0) {
+    return "<p>Графік оплат не заповнений.</p>";
+  }
 
-    let rows = "";
+  let rows = "";
 
-    payments.forEach(function (payment) {
-        rows += `
+  payments.forEach(function (payment) {
+    rows += `
             <tr>
                 <td>${escapeHtml(payment.paymentNo)}</td>
                 <td>${escapeHtml(payment.amount)}</td>
@@ -960,9 +984,9 @@ function buildPaymentsWordTable(payments) {
                 <td>${escapeHtml(payment.comment)}</td>
             </tr>
         `;
-    });
+  });
 
-    return `
+  return `
         <table>
             <thead>
                 <tr>
@@ -980,46 +1004,44 @@ function buildPaymentsWordTable(payments) {
 }
 
 function escapeHtml(value) {
-    if (value === null || value === undefined) {
-        return "";
-    }
+  if (value === null || value === undefined) {
+    return "";
+  }
 
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;")
-        .replaceAll("\n", "<br>");
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;")
+    .replaceAll("\n", "<br>");
 }
 
 function downloadWordDocument(html, data) {
-    const projectNo = data.general.projectNo || "NoProject";
-    const projectName = data.general.projectName || "Brief";
+  const projectNo = data.general.projectNo || "NoProject";
+  const projectName = data.general.projectName || "Brief";
 
-    const safeFileName = makeSafeFileName(
-        "Brief_" + projectNo + "_" + projectName + ".doc"
-    );
+  const safeFileName = makeSafeFileName(
+    "Brief_" + projectNo + "_" + projectName + ".doc",
+  );
 
-    const blob = new Blob(["\ufeff", html], {
-        type: "application/msword;charset=utf-8"
-    });
+  const blob = new Blob(["\ufeff", html], {
+    type: "application/msword;charset=utf-8",
+  });
 
-    const url = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = safeFileName;
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = safeFileName;
 
-    document.body.appendChild(link);
-    link.click();
+  document.body.appendChild(link);
+  link.click();
 
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 function makeSafeFileName(fileName) {
-    return fileName
-        .replace(/[\\/:*?"<>|]/g, "_")
-        .replace(/\s+/g, "_");
+  return fileName.replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_");
 }
