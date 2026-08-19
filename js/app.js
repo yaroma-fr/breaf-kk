@@ -2,10 +2,18 @@ document.addEventListener("DOMContentLoaded", function () {
   initDynamicFields();
   initStagesTable();
   initPaymentsTable();
-  initDownloadWordButton();
 
-  initExclusiveCheckboxGroup("ipItems", "Ні, нічого з цього");
+  initExclusiveCheckboxGroup(
+    "ipItems",
+    "Ні, нічого з цього",
+    handleIpDetailsVisibility,
+  );
+
   initExclusiveCheckboxGroup("fileLinks", "Відсутній");
+
+  handleIpDetailsVisibility();
+
+  initDownloadWordButton();
 });
 
 /* ================================
@@ -43,6 +51,19 @@ function collectCheckedValues(name) {
   return Array.from(checked).map(function (item) {
     return item.value;
   });
+}
+
+function validateCheckboxGroup(groupName, message) {
+  const checkedItems = document.querySelectorAll(
+    `input[name="${groupName}"]:checked`,
+  );
+
+  if (checkedItems.length === 0) {
+    alert(message);
+    return false;
+  }
+
+  return true;
 }
 
 /* ================================
@@ -135,22 +156,9 @@ function initDynamicFields() {
         );
       });
     });
-
-  // ПДВ
-  document
-    .querySelectorAll('input[name="contractorVat"]')
-    .forEach(function (radio) {
-      radio.addEventListener("change", function () {
-        const value = getRadioValue("contractorVat");
-        const isVatPayer = value === "Так";
-
-        showElementById("vatAmountRow", isVatPayer);
-        showElementById("costWithVatRow", isVatPayer);
-      });
-    });
 }
 
-function initExclusiveCheckboxGroup(groupName, noneValue) {
+function initExclusiveCheckboxGroup(groupName, noneValue, afterChange) {
   const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
 
   checkboxes.forEach(function (checkbox) {
@@ -172,8 +180,40 @@ function initExclusiveCheckboxGroup(groupName, noneValue) {
           }
         });
       }
+
+      if (typeof afterChange === "function") {
+        afterChange();
+      }
     });
   });
+}
+
+function handleIpDetailsVisibility() {
+  const selectedIpItems = collectCheckedValues("ipItems");
+
+  const shouldShowDetails =
+    selectedIpItems.length > 0 &&
+    !selectedIpItems.includes("Ні, нічого з цього");
+
+  showElementById("ipDetailsBlock", shouldShowDetails);
+
+  if (!shouldShowDetails) {
+    const ipDescription = document.getElementById("ipDescription");
+    const usageRestrictions = document.getElementById("usageRestrictions");
+    const clientRights = document.getElementById("clientRights");
+
+    if (ipDescription) {
+      ipDescription.value = "";
+    }
+
+    if (usageRestrictions) {
+      usageRestrictions.value = "";
+    }
+
+    if (clientRights) {
+      clientRights.value = "";
+    }
+  }
 }
 
 /* ================================
@@ -321,7 +361,6 @@ function collectBriefData() {
       managerEmail: getValue("managerEmail"),
       clientName: getValue("clientName"),
       projectName: getValue("projectName"),
-      projectNo: getValue("projectNo"),
       documentType: getDocumentType(),
     },
 
@@ -463,13 +502,49 @@ function collectPayments() {
 
 function initDownloadWordButton() {
   const button = document.getElementById("downloadWordBtn");
+  const form = document.getElementById("briefForm");
 
   if (!button) {
     console.warn("downloadWordBtn not found");
     return;
   }
 
+  if (!form) {
+    console.warn("briefForm not found");
+    return;
+  }
+
   button.addEventListener("click", function () {
+    // 1. Перевірка стандартних required-полів
+    if (!form.checkValidity()) {
+      alert("Заповніть усі обов'язкові поля перед завантаженням Word.");
+
+      // Показує стандартні браузерні підказки біля незаповнених полів
+      form.reportValidity();
+
+      return;
+    }
+
+    // 2. Перевірка обов'язкових checkbox-груп
+    if (
+      !validateCheckboxGroup(
+        "ipItems",
+        "Оберіть варіант у блоці «Інтелектуальна власність».",
+      )
+    ) {
+      return;
+    }
+
+    if (
+      !validateCheckboxGroup(
+        "fileLinks",
+        "Оберіть варіант у блоці «Файли та посилання».",
+      )
+    ) {
+      return;
+    }
+
+    // 3. Якщо все заповнено, формуємо Word
     const data = collectBriefData();
     const html = buildWordDocumentHtml(data);
 
@@ -566,13 +641,8 @@ function buildWordDocumentHtml(data) {
         </tr>
 
         <tr>
-            <td class="label">Назва проєкту</td>
+            <td class="label">Назва та номер проєкту</td>
             <td class="value">${escapeHtml(data.general.projectName)}</td>
-        </tr>
-
-        <tr>
-            <td class="label">Номер проєкту</td>
-            <td class="value">${escapeHtml(data.general.projectNo)}</td>
         </tr>
 
         <tr>
@@ -622,7 +692,7 @@ function buildWordDocumentHtml(data) {
      
 
         <tr>
-            <td class="label">Мета документу</td>
+            <td class="label">Мета послуг за документом</td>
             <td class="value">${escapeHtml(data.legal.documentPurpose)}</td>
         </tr>
     </table>
@@ -706,10 +776,6 @@ function buildWordDocumentHtml(data) {
             <td class="value">${escapeHtml(data.services.serviceDescription)}</td>
         </tr>
 
-        <tr>
-            <td class="label">Як відображені послуги з клієнтом</td>
-            <td class="value">${escapeHtml(data.services.clientContractReference)}</td>
-        </tr>
     </table>
 
     <h2>4. ТЗ/Замовлення Клієнта/Додаток</h2>
@@ -807,6 +873,10 @@ function buildWordDocumentHtml(data) {
             <td class="value">${escapeHtml(data.intellectualProperty.ipItems.join(", "))}</td>
         </tr>
 
+     ${
+       data.intellectualProperty.ipItems.length > 0 &&
+       !data.intellectualProperty.ipItems.includes("Ні, нічого з цього")
+         ? `
         <tr>
             <td class="label">Якщо так, що саме створюється?</td>
             <td class="value">${escapeHtml(data.intellectualProperty.ipDescription)}</td>
@@ -821,6 +891,9 @@ function buildWordDocumentHtml(data) {
             <td class="label">Чи потрібні авторські права клієнту (банку)</td>
             <td class="value">${escapeHtml(data.intellectualProperty.clientRights)}</td>
         </tr>
+    `
+         : ""
+     }
     </table>
 
     <h2>8. Додаткові та ризикові умови</h2>
@@ -940,90 +1013,9 @@ function escapeHtml(value) {
 }
 
 function downloadWordDocument(html, data) {
-  const projectNo = data.general.projectNo || "NoProject";
   const projectName = data.general.projectName || "Brief";
 
-  const safeFileName = makeSafeFileName(
-    "Brief_" + projectNo + "_" + projectName + ".doc",
-  );
-
-  const blob = new Blob(["\ufeff", html], {
-    type: "application/msword;charset=utf-8",
-  });
-
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = safeFileName;
-
-  document.body.appendChild(link);
-  link.click();
-
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}
-
-function makeSafeFileName(fileName) {
-  return fileName.replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_");
-}
-
-function buildPaymentsWordTable(payments) {
-  if (!payments || payments.length === 0) {
-    return "<p>Графік оплат не заповнений.</p>";
-  }
-
-  let rows = "";
-
-  payments.forEach(function (payment) {
-    rows += `
-            <tr>
-                <td>${escapeHtml(payment.paymentNo)}</td>
-                <td>${escapeHtml(payment.amount)}</td>
-                <td>${escapeHtml(payment.payDate)}</td>
-                <td>${escapeHtml(payment.comment)}</td>
-            </tr>
-        `;
-  });
-
-  return `
-        <table>
-            <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Сума</th>
-                    <th>Дата</th>
-                    <th>Коментар</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${rows}
-            </tbody>
-        </table>
-    `;
-}
-
-function escapeHtml(value) {
-  if (value === null || value === undefined) {
-    return "";
-  }
-
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;")
-    .replaceAll("\n", "<br>");
-}
-
-function downloadWordDocument(html, data) {
-  const projectNo = data.general.projectNo || "NoProject";
-  const projectName = data.general.projectName || "Brief";
-
-  const safeFileName = makeSafeFileName(
-    "Brief_" + projectNo + "_" + projectName + ".doc",
-  );
+  const safeFileName = makeSafeFileName("Brief_" + projectName + ".doc");
 
   const blob = new Blob(["\ufeff", html], {
     type: "application/msword;charset=utf-8",

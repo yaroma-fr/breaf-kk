@@ -466,3 +466,12 @@ button:hover {
   border-color: #84cc16;
   background: #f7fee7;
 }
+
+.form-actions {
+  width: 100%;
+  display: flex;
+}
+
+.form-actions .primary-button {
+  width: 100%;
+}

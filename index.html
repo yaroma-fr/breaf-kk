@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Бриф для договору з підрядником</title>
-    <link rel="icon" type="image/svg+xml" href="./favicon.ico" />
+    <link rel="icon" type="image" href="./favicon.ico" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
 
@@ -64,23 +64,12 @@
           </div>
 
           <div class="form-row">
-            <label for="projectName">Назва проєкту *</label>
+            <label for="projectName">Назва та номер проєкту *</label>
             <input
               id="projectName"
               name="projectName"
               type="text"
               placeholder="Назва проєкту"
-              required
-            />
-          </div>
-
-          <div class="form-row">
-            <label for="projectNo">Номер проєкту *</label>
-            <input
-              id="projectNo"
-              name="projectNo"
-              type="text"
-              placeholder="123456"
               required
             />
           </div>
@@ -244,7 +233,7 @@
 
           <div class="choice-card">
             <div class="form-row">
-              <label>Мета документу *</label>
+              <label>Мета послуг за документом *</label>
 
               <div class="radio-group purpose-radio">
                 <label>
@@ -296,11 +285,11 @@
           </div>
 
           <div class="form-row">
-            <label for="activityDate"
-              >Дата проведення активності
-              <span class="hint">(якщо застосовується)</span></label
-            >
-            <input id="activityDate" name="activityDate" type="date" />
+            <label for="activityDate">
+              Дата проведення активності
+              <span class="hint">(якщо застосовується)</span>
+            </label>
+            <input id="activityDate" name="activityDate" type="text" required />
           </div>
 
           <div class="form-row">
@@ -333,13 +322,14 @@
 
           <div class="form-row">
             <label for="worksectionLink"
-              >Посилання на гілку Worksection де перевіряли підрядника</label
-            >
+              >Посилання на гілку Worksection де перевіряли підрядника *
+            </label>
             <input
               id="worksectionLink"
               name="worksectionLink"
-              type="url"
+              type="text"
               placeholder="https://..."
+              required
             />
           </div>
 
@@ -354,31 +344,37 @@
           </div>
 
           <div class="form-row">
-            <label for="contractorPhone">Контактний телефон підрядника</label>
+            <label for="contractorPhone">Контактний телефон підрядника *</label>
             <input
               id="contractorPhone"
               name="contractorPhone"
               type="tel"
               placeholder="+380..."
+              required
             />
           </div>
 
           <div class="form-row">
-            <label>Чи працювали з цим підрядником раніше?</label>
+            <label>Чи працювали з цим підрядником раніше? *</label>
 
             <div class="radio-group horizontal">
               <label>
-                <input type="radio" name="workedBefore" value="Так" />
+                <input type="radio" name="workedBefore" value="Так" required />
                 Так
               </label>
 
               <label>
-                <input type="radio" name="workedBefore" value="Ні" />
+                <input type="radio" name="workedBefore" value="Ні" required />
                 Ні
               </label>
 
               <label>
-                <input type="radio" name="workedBefore" value="Не знаю" />
+                <input
+                  type="radio"
+                  name="workedBefore"
+                  value="Не знаю"
+                  required
+                />
                 Не знаю
               </label>
             </div>
@@ -396,16 +392,16 @@
           </div>
 
           <div class="form-row">
-            <label>Чи підрядник працює у “Вчасно”?</label>
+            <label>Чи підрядник працює у “Вчасно”? *</label>
 
             <div class="radio-group horizontal">
               <label>
-                <input type="radio" name="vchasno" value="Так" />
+                <input type="radio" name="vchasno" value="Так" required />
                 Так
               </label>
 
               <label>
-                <input type="radio" name="vchasno" value="Ні" />
+                <input type="radio" name="vchasno" value="Ні" required />
                 Ні
               </label>
             </div>
@@ -418,7 +414,7 @@
         </section>
 
         <!-- 3. Що саме має зробити підрядник -->
-        <section class="form-section" id="section-services">
+        <section class="form-section" id="section-services-task">
           <h2>3. Що саме має зробити підрядник</h2>
 
           <div class="form-row">
@@ -445,18 +441,6 @@
               id="serviceDescription"
               name="serviceDescription"
               required
-            ></textarea>
-          </div>
-
-          <div class="form-row textarea-row">
-            <label for="clientContractReference">
-              Як відображені послуги в договорі / додатку з клієнтом?
-            </label>
-
-            <textarea
-              id="clientContractReference"
-              name="clientContractReference"
-              placeholder="Вкажіть пункт договору, додатку, замовлення клієнта або ТЗ"
             ></textarea>
           </div>
         </section>
@@ -754,28 +738,29 @@
               >
             </div>
           </div>
+          <div id="ipDetailsBlock" class="hidden">
+            <div class="form-row textarea-row">
+              <label for="ipDescription">Якщо так, що саме створюється?</label>
+              <textarea id="ipDescription" name="ipDescription"></textarea>
+            </div>
 
-          <div class="form-row textarea-row">
-            <label for="ipDescription">Якщо так, що саме створюється?</label>
-            <textarea id="ipDescription" name="ipDescription"></textarea>
-          </div>
+            <div class="form-row textarea-row">
+              <label for="usageRestrictions"
+                >Чи є обмеження щодо використання результату?</label
+              >
+              <textarea
+                id="usageRestrictions"
+                name="usageRestrictions"
+                placeholder="Строк, територія, канали використання, заборона редагування тощо"
+              ></textarea>
+            </div>
 
-          <div class="form-row textarea-row">
-            <label for="usageRestrictions"
-              >Чи є обмеження щодо використання результату?</label
-            >
-            <textarea
-              id="usageRestrictions"
-              name="usageRestrictions"
-              placeholder="Строк, територія, канали використання, заборона редагування тощо"
-            ></textarea>
-          </div>
-
-          <div class="form-row textarea-row">
-            <label for="clientRights"
-              >Чи потрібні авторські права клієнту(банку)?</label
-            >
-            <textarea id="clientRights" name="clientRights"></textarea>
+            <div class="form-row textarea-row">
+              <label for="clientRights"
+                >Чи потрібні авторські права клієнту(банку)?</label
+              >
+              <textarea id="clientRights" name="clientRights"></textarea>
+            </div>
           </div>
         </section>
 
@@ -786,7 +771,7 @@
           <div class="form-row textarea-row">
             <label for="riskConditions">
               Будь-які домовленості з підрядником, які обов’язково потрібно
-              включити в документ
+              включити в документ *
             </label>
 
             <textarea id="riskConditions" name="riskConditions"></textarea>
@@ -800,7 +785,7 @@
           <div class="form-row checkbox-row">
             <label>
               Чи наявний будь-який документ з підрядником, що описує або
-              деталізує послугу?
+              деталізує послугу? *
             </label>
 
             <div class="checkbox-grid">
@@ -849,12 +834,13 @@
 
           <div class="form-row textarea-row">
             <label for="additionalLinks"
-              >Посилання або коментарі до файлів</label
+              >Посилання або коментарі до файлів *</label
             >
             <textarea
               id="additionalLinks"
               name="additionalLinks"
               placeholder="Вставте посилання на Worksection, SharePoint, Google Drive або інші матеріали"
+              required
             ></textarea>
           </div>
         </section>
@@ -873,9 +859,11 @@
                     Сформувати бриф
                 </button>
             </div> -->
-        <button type="button" class="primary-button" id="downloadWordBtn">
-          Завантажити Word
-        </button>
+        <div class="form-actions">
+          <button type="button" class="primary-button" id="downloadWordBtn">
+            Завантажити Word
+          </button>
+        </div>
       </form>
     </main>
 
